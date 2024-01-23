@@ -3,13 +3,25 @@
 [The One Billion Row Challenge](https://github.com/gunnarmorling/1brc).
 
 This solves the 1BRCthe in rust with [polars](https://docs.pola.rs/). Most of the time was spent thinking to go crazy until the missing feature flag was discovered.
-On my MacBook Air (M2, 2023) it takes ~104s to complete and used more than 40GB of RAM, which means it was swapping a lot.
 
-## Usage
+## results
+Machine: MacBook Air (M2, 2023)
+
+### stable
+Rust version: 1.73.0-aarch64-apple-darwin
+
+Takes ~400s to complete and used more than 40GB of RAM, which means it was swapping a lot.
+
+### nightly
+Rust version: nightly
+
+Takes ~400s.
+
+## Output (stable)
 ```bash
 cargo build --release && time target/release/one_billion_row_challenge_polars
    Compiling one_billion_row_challenge_polars v0.1.0 (/Users/patte/src/1BRC-rs/polars)
-    Finished release [optimized] target(s) in 1.47s
+    Finished release [optimized] target(s) in 1m 36s
 num stations: 413
 Abha;-33.9,18.0,67.5
 Abidjan;-24.1,26.0,74.6
