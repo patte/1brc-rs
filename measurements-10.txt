@@ -1,0 +1,10 @@
+Parakou;41.2
+Chittagong;31.3
+Antananarivo;25.1
+Arkhangelsk;3.3
+San Francisco;34.5
+Kampala;23.5
+Baguio;19.9
+Melbourne;23.7
+Praia;41.4
+San Francisco;31.2
