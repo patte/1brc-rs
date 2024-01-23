@@ -8,7 +8,7 @@ fn main() {
     io::stdin().lock().read_to_end(&mut buffer).unwrap();
 
     // group by station into a hashmap
-    let stations_with_values: HashMap<String, Vec<f64>> = buffer
+    let stations_with_values: HashMap<String, Vec<f32>> = buffer
         .par_split(|&c| c == b'\n')
         .fold(
             || HashMap::new(),
@@ -19,7 +19,7 @@ fn main() {
                 }
                 let mut parts = line.split(';');
                 let station = parts.next().unwrap().to_string();
-                let value = parts.next().unwrap().parse::<f64>().unwrap();
+                let value = parts.next().unwrap().parse::<f32>().unwrap();
                 acc.entry(station).or_insert_with(Vec::new).push(value);
                 acc
             },
@@ -36,10 +36,10 @@ fn main() {
     drop(buffer);
 
     // avg,min,max for each station
-    let result: HashMap<String, (f64, f64, f64)> = stations_with_values
+    let result: HashMap<String, (f32, f32, f32)> = stations_with_values
         .par_iter()
         .map(|(station, values)| {
-            let avg = ((values.iter().sum::<f64>() / values.len() as f64) * 10.0).round() / 10.0;
+            let avg = ((values.iter().sum::<f32>() / values.len() as f32) * 10.0).round() / 10.0;
             let min = values
                 .iter()
                 .min_by(|a, b| a.partial_cmp(b).unwrap())
@@ -85,7 +85,7 @@ loop {
 }
 
 // group by station
-let stations_with_values: HashMap<String, Vec<f64>> = rx
+let stations_with_values: HashMap<String, Vec<f32>> = rx
     .into_iter()
     .par_bridge()
     .fold(
