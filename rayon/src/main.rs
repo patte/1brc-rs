@@ -9,7 +9,7 @@ fn main() {
 
     // read the file measure.csv into a buffer completely
     let mut buffer = Vec::<u8>::with_capacity(4 * 1024 * 1024 * 1024);
-    let mut file = BufReader::new(std::fs::File::open("measurements-1000000000.txt").unwrap());
+    let mut file = BufReader::new(std::fs::File::open("../measurements-1000000000.txt").unwrap());
     file.read_to_end(&mut buffer).unwrap();
 
     // group by station into a hashmap
