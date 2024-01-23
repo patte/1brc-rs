@@ -1,26 +1,32 @@
 use rayon::prelude::*;
 use std::collections::HashMap;
-use std::io::{self, Read};
+use std::io::{BufReader, Read};
 
 fn main() {
-    // read stdin into a buffer (14GB capacity)
-    let mut buffer = Vec::<u8>::with_capacity(14 * 1024 * 1024 * 1024);
-    io::stdin().lock().read_to_end(&mut buffer).unwrap();
+    // read stdin into a buffer
+    //let mut buffer = Vec::<u8>::with_capacity(4 * 1024 * 1024 * 1024);
+    //io::stdin().lock().read_to_end(&mut buffer).unwrap();
+
+    // read the file measure.csv into a buffer completely
+    let mut buffer = Vec::<u8>::with_capacity(4 * 1024 * 1024 * 1024);
+    let mut file = BufReader::new(std::fs::File::open("measurements-1000000000.txt").unwrap());
+    file.read_to_end(&mut buffer).unwrap();
 
     // group by station into a hashmap
     let stations_with_values: HashMap<String, Vec<f32>> = buffer
         .par_split(|&c| c == b'\n')
+        .map(|line_bytes| String::from_utf8(line_bytes.to_vec()).unwrap())
         .fold(
             || HashMap::new(),
-            |mut acc, line_bytes| {
-                let line = String::from_utf8(line_bytes.to_vec()).unwrap();
+            |mut acc, line| {
                 if line.len() == 0 {
                     return acc;
                 }
-                let mut parts = line.split(';');
-                let station = parts.next().unwrap().to_string();
-                let value = parts.next().unwrap().parse::<f32>().unwrap();
-                acc.entry(station).or_insert_with(Vec::new).push(value);
+                let (station, value_raw) = line.split_once(';').unwrap();
+                let value = value_raw.parse::<f32>().unwrap();
+                acc.entry(station.to_string())
+                    .or_insert_with(Vec::new)
+                    .push(value);
                 acc
             },
         )
@@ -35,8 +41,7 @@ fn main() {
     // release buffer
     drop(buffer);
 
-    // avg,min,max for each station
-    let result: HashMap<String, (f32, f32, f32)> = stations_with_values
+    let mut result: Vec<(String, (f32, f32, f32))> = stations_with_values
         .par_iter()
         .map(|(station, values)| {
             let avg = ((values.iter().sum::<f32>() / values.len() as f32) * 10.0).round() / 10.0;
@@ -52,10 +57,16 @@ fn main() {
         })
         .collect();
 
+    // sort
+    result
+        .as_parallel_slice_mut()
+        .par_sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
+
     // print result
     for (station, (avg, min, max)) in &result {
-        println!("{};{},{},{}", station, avg, min, max);
+        println!("{};{}/{}/{}", station, min, avg, max);
     }
+
     println!("Number of stations: {}", result.len());
 }
 //
