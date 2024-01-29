@@ -8,6 +8,9 @@ use std::fs::File;
 type Value = I48F16;
 
 // https://gist.github.com/Lucretiel/b9d8a2f75c445ba62035fd80adb5fd57
+// parses a byte slice into a fixed point number eg.
+//  123 => 12.3
+//  -12 => -1.2
 fn fast_parse(input: &[u8]) -> Value {
     let neg = input[0] == b'-';
     let len = input.len();
@@ -39,6 +42,7 @@ fn main() {
     //let mut file_buffer = BufReader::new(file);
     //file_buffer.read_to_end(&mut file_vec).unwrap();
 
+    // map the file into memory
     let mapped_data = unsafe { Mmap::map(&file) }.expect("failed to create memory map");
     let raw_data = &*mapped_data;
     let raw_data = raw_data.strip_suffix(b"\n").unwrap_or(raw_data);
@@ -108,36 +112,3 @@ fn main() {
 
     println!("Number of stations: {}", result.len());
 }
-//
-/* read in chunks
-
-let (tx, rx) = crossbeam_channel::unbounded();
-thread::spawn(move || {
-    let mut input = io::stdin().lock();
-    // read chunks into a buffer and send to the channel, no line splitting yet
-    loop {
-        let mut buffer = Vec::<u8>::with_capacity(1024 * 1024);
-        let n = input.read(&mut buffer).unwrap();
-        println!("read {} bytes", n);
-        if n == 0 {
-            //break;
-        }
-        tx.send(buffer).unwrap();
-    }
-});
-
-loop {
-    rx.iter().for_each(|buffer| {
-        // print buffer
-        let mut lines = buffer.split(|&c| c == b'\n');
-        println!("{:?}", lines.next().unwrap());
-    });
-}
-
-// group by station
-let stations_with_values: HashMap<String, Vec<f32>> = rx
-    .into_iter()
-    .par_bridge()
-    .fold(
-
-*/
