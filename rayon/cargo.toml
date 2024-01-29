@@ -5,3 +5,5 @@ edition = "2021"
 
 [dependencies]
 rayon = "1.8.1"
+fixed = "1.24.0"
+memmap2 = "0.9.3"
