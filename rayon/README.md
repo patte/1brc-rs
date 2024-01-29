@@ -4,6 +4,7 @@
 
 Atm this is an attempt with rayon for parallelism.
 Improved with inpiration from [this gist by Lucretiel](https://gist.github.com/Lucretiel/b9d8a2f75c445ba62035fd80adb5fd57).
+Thanks to [kobzol](https://kobzol.github.io/rust/cargo/2024/01/23/making-rust-binaries-smaller-by-default.html) the binary size is now also quite small `628KB`.
 
 On my MacBook Air (M2, 2023) it takes ~48s to complete. Memory usage peaks at ~14GB.
 
